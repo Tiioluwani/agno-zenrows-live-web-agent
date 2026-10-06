@@ -67,6 +67,7 @@ agno-zenrows-live-web-agent/
 ├── tests/
 ├── .env.example
 ├── .gitignore
+├── LICENSE
 ├── pyproject.toml
 ├── requirements.txt
 ├── uv.lock
