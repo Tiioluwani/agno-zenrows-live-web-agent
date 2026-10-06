@@ -44,9 +44,7 @@ def test_zenrows_request_uses_documented_parameters():
     assert kwargs["params"] == {
         "url": "https://example.com",
         "apikey": "secret",
-        "js_render": "true",
-        "premium_proxy": "true",
-        "wait": "5000",
+        "mode": "auto",
     }
     assert result["title"] == "Widget"
 

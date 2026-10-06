@@ -1,15 +1,15 @@
-# Agno Zenrows live web agent
+# Agno Zenrows Live Web Agent
 
 ## Description
 
-This project uses two Agno agents to retrieve a public web page through Zenrows and turn its content into a structured market snapshot. The first agent handles live web access; the second extracts only data supported by the fetched page.
+This project uses two Agno agents to retrieve current web data through [Zenrows Fetch](https://www.zenrows.com/products/scraper-api) and turn the returned content into a structured market snapshot. The web data agent handles live web access, while the processing agent extracts only values supported by the fetched page.
 
 ## Features
 
-- Registers Zenrows as a typed Python tool in Agno
+- Registers Zenrows Fetch as a typed Python tool in Agno
 - Uses a deterministic two-agent handoff
-- Compares a direct request with the Zenrows-backed request
-- Waits five seconds for asynchronous JavaScript-rendered products to populate
+- Compares a direct request with the response returned by Fetch
+- Uses `mode=auto` to select the access configuration for each target
 - Returns a validated Pydantic result
 - Keeps API credentials in environment variables
 - Includes isolated tests that do not spend API credits
@@ -17,7 +17,7 @@ This project uses two Agno agents to retrieve a public web page through Zenrows 
 ## Prerequisites
 
 - Python 3.11, 3.12, or 3.13
-- A Zenrows API key
+- A [Zenrows API key](https://app.zenrows.com/register)
 - An OpenAI API key
 
 Use only public pages you are authorized to access. Do not use this project to collect personal data or access restricted categories of sites.
@@ -35,7 +35,7 @@ source .venv/bin/activate
 # .venv\Scripts\Activate.ps1
 
 python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
+python -m pip install -r requirements.txt
 ```
 
 ## Configuration
@@ -53,7 +53,7 @@ OPENAI_MODEL=gpt-5-mini
 TARGET_URL=https://www.scrapingcourse.com/javascript-rendering
 ```
 
-## Project structure
+## Project Structure
 
 ```text
 agno-zenrows-live-web-agent/
@@ -66,22 +66,24 @@ agno-zenrows-live-web-agent/
 │   └── workflow.py
 ├── tests/
 ├── .env.example
+├── .gitignore
 ├── pyproject.toml
+├── requirements.txt
 ├── uv.lock
 ├── VALIDATION.md
 └── README.md
 ```
 
-## How it works
+## How It Works
 
 1. The CLI optionally sends a normal HTTP request to make the access difference visible.
-2. The web data agent calls `fetch_with_zenrows()` with JavaScript rendering and Premium Proxies explicitly enabled.
-3. Zenrows waits five seconds after rendering so asynchronous product data has time to populate.
+2. The web data agent calls `fetch_with_zenrows()` with `mode=auto`.
+3. Fetch selects the access configuration for the target before returning the page content.
 4. The tool removes scripts and styles, preserves relevant market metadata, and limits the page text before returning it to the agent.
 5. The workflow passes the validated `FetchedPage` object to the market intelligence agent.
 6. The second agent returns a validated `MarketSnapshot` with evidence from the page.
 
-## Running the project
+## Running the Project
 
 Run the configured target:
 
@@ -113,7 +115,7 @@ ruff check .
 Two scenarios were validated on September 19, 2026:
 
 1. **Cloudflare challenge:** the direct request returned HTTP `403` with `Just a moment...`. Zenrows returned HTTP `200` with content containing `You bypassed the Cloudflare challenge! :D`.
-2. **JavaScript-rendered products:** the direct request returned HTTP `200`, but its HTML contained no populated product names or prices. Zenrows returned 12 populated products after JavaScript rendering. The two-agent workflow selected one product and produced the `MarketSnapshot` below.
+2. **JavaScript-rendered products:** the direct request returned HTTP `200`, but its HTML contained no populated product names or prices. The Zenrows response contained 12 populated products. The two-agent workflow selected one product and produced the `MarketSnapshot` below.
 
 This is the genuine structured output printed by the September 19, 2026 validation run:
 
@@ -139,13 +141,13 @@ The CLI did not expose Zenrows credit usage, so no credit figure is claimed.
 
 - Python
 - Agno
-- Zenrows Fetch API
+- Zenrows Fetch
 - OpenAI
 - Pydantic
 - Requests
 - Beautiful Soup
 - Pytest
 
-## Related article
+## Related Article
 
 Article URL to be added after publication.

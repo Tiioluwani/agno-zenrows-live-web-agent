@@ -19,7 +19,7 @@
 
 - Target: `https://www.scrapingcourse.com/javascript-rendering`
 - Direct request: HTTP 200, but product names and prices were empty
-- Zenrows request: 12 populated products after JavaScript rendering and a five-second wait
+- Zenrows response: 12 populated products
 - Both agents completed successfully
 - Final `MarketSnapshot`:
 

@@ -7,7 +7,6 @@ import requests
 from bs4 import BeautifulSoup
 
 ZENROWS_ENDPOINT = "https://api.zenrows.com/v1/"
-ZENROWS_RENDER_WAIT_MS = 5_000
 
 
 def page_to_text(html: str, limit: int = 12_000) -> tuple[str | None, str]:
@@ -34,8 +33,6 @@ def fetch_with_zenrows(
     api_key: str,
     *,
     session: Any = requests,
-    js_render: bool = True,
-    premium_proxy: bool = True,
 ) -> dict[str, object]:
     """Fetch a public page through Zenrows and return compact page text."""
     response = session.get(
@@ -43,9 +40,7 @@ def fetch_with_zenrows(
         params={
             "url": url,
             "apikey": api_key,
-            "js_render": str(js_render).lower(),
-            "premium_proxy": str(premium_proxy).lower(),
-            "wait": str(ZENROWS_RENDER_WAIT_MS),
+            "mode": "auto",
         },
         timeout=60,
     )
